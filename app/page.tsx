@@ -1,91 +1,69 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+import Link from 'next/link'
 
-const inter = Inter({ subsets: ['latin'] })
+async function fetchUser() {
+  const res = await fetch("http://localhost:3000/api/user", {
+    next: {
+      revalidate: 10
+    }
+  })
 
-export default function Home() {
+  const data = await res.json()
+  return data.users;
+}
+
+export default async function Home() {
+
+  const users = await fetchUser()
+  console.log(users);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <main className="w-full h-full">
+      <div className='px-16 py-10'>
+        <p className='not-italic'>Exploring Full Stack</p>
       </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
+      <Link className='ng-teal-700 text-black py-2 px-4 rounded-lg bg-red-600 mx-6' href={"/user/add"}> Add a new User </Link>
 
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+      {/* users  */}
+      <div className='w-full flex flex-col justify-center items-center'>
+        {
+          users.map((user: any) => {
+            return (
+              <>
+                <div className='w-3/4 p-4 rounded-md mx-3 my-2 bg-slate-200 flex flex-col justify-center'>
+                  {/* name and action  */}
+                  <div className='flex items-center my-3'>
+                    <div className='mr-auto'>
+                      <h2 className='mr-auto font-semibold'>{user.name}</h2>
+                    </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
+                    {/* <div className=''></div> */}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+                    <Link href={`user/edit/${user.id}`} className='gap-2 px-4 py-1 text-center text-xl bg-slate-900 rounded-md font-semibold text-slate-200'>Edit</Link>
+                  </div>
+
+                  {/* email  */}
+                  <div className='mr-auto my-1'>
+                    <h2>{user.email}</h2>
+                  </div>
+
+                  {/* date   */}
+
+                  <div className='mr-auto my-1'>
+                    <blockquote className='font-bold text-slate-700'>
+                      {new Date().toDateString()}
+                    </blockquote>
+                  </div>
+
+
+                </div>
+              </>
+            )
+          })
+        }
       </div>
     </main>
   )
 }
+
+
